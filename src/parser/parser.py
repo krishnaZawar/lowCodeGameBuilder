@@ -61,7 +61,7 @@ class Parser:
         elif self.peek(TokenType.IDENTIFIER) or self.peek(TokenType.NUMERICLITERAL) or self.peek(TokenType.STRINGLITERAL):
             root = AST(self.curToken)
             self.eat(self.curToken.type)
-        elif self.curTokenValueIn(['getX' , 'getY' , 'keyDown']):
+        elif self.curTokenValueIn(['getX' , 'getY' , 'keyDown', 'checkCollision']):
             root = self.parseFunction()
         else:
             raise Exception("parsing error")

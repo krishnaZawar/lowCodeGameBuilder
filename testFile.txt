@@ -2,25 +2,30 @@ initGame;
 
     initWindow(500,500);
     setWindowTitle("new window");
-    gameObject player = GameObject(10, 10, 10, 10, 0, 0, 0);
+    gameObject player = GameObject(10, 10, 10, 10, 255, 0, 0);
+    gameObject endpoint = GameObject(100, 100, 10, 10, 0, 0, 0);
     integer running = 1;
-    integer direction = 0;
     while (running == 1){
         setBackgroundColor(255, 255, 255);
         draw(player);
+        draw(endpoint);
         
         if(keyDown("w") == 1){
             moveY(player , -3);
         }  
-         if(keyDown("a") == 1){
+        if(keyDown("a") == 1){
             moveX(player , -3);
         }
-         if(keyDown("s") == 1){
+        if(keyDown("s") == 1){
             moveY(player , 3);
         }
-         if(keyDown("d") == 1){
+        if(keyDown("d") == 1){
             moveX(player , 3);
-        }                
+        }      
+
+        if(checkCollision(player, endpoint) == 1){
+            running = 0;
+        }
     }
 
 endGame;

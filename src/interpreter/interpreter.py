@@ -54,8 +54,8 @@ class Interpreter:
                 if not variable in self.variableMap:
                     raise Exception('Undeclared variable is used')             
                 return True if self.variableMap[variable][0] == "integer" else False
-            return root.token.value in ['getX', 'getY' , 'keyDown']
-        return root.token.value in ['getX', 'getY' , 'keyDown']
+            return root.token.value in ['getX', 'getY' , 'keyDown', 'checkCollision']
+        return root.token.value in ['getX', 'getY' , 'keyDown', 'checkCollision']
 # -------------------------------------------arithmetic expressions------------------------------------------------
     def evaluateArithmeticOperatorNode(self, root : AST) -> int:
         left = root.children[0]
@@ -78,6 +78,8 @@ class Interpreter:
             leftVal = self.getX(left) if left.token.value == 'getX' else self.getY(left)
         elif left.token.value == 'keyDown':
             leftVal = self.keyDown(left)
+        elif left.token.value == 'checkCollision':
+            leftVal = self.checkCollision(left)
         else:
             raise Exception("expected a numeric value")
         
@@ -95,6 +97,8 @@ class Interpreter:
             rightVal = self.getX(right) if right.token.value == 'getX' else self.getY(right)
         elif right.token.value == 'keyDown':
             rightVal = self.keyDown(right)
+        elif right.token.value == 'checkCollision':
+            rightVal = self.checkCollision(right)
         else:
             raise Exception("expected a numeric value")
         
@@ -117,6 +121,8 @@ class Interpreter:
             return self.getX(root) if root.token.value == 'getX' else self.getY(root) 
         elif root.token.value == 'keyDown':
             return self.keyDown(root)
+        elif root.token.value == 'checkCollision':
+            return self.checkCollision(root)
         raise Exception("expected a numeric value")
     
 # ---------------------------------------------string expression--------------------------------------------------
@@ -329,6 +335,29 @@ class Interpreter:
         if self.keysPressed[self.keys[key]]:
             return 1
         return 0 
+    
+# ---------------------------------------------collision-----------------------------------------------------------
+
+    def checkCollision(self, root : AST) -> bool:
+        if len(root.children) != 2:
+            raise Exception('checkCollision expects two arguments: gameObject1 and gameObject2')
+        
+        object1 = root.children[0].token.value
+        object2 = root.children[1].token.value
+
+        if not object1 in self.variableMap or not object2 in self.variableMap:
+            raise Exception('undeclared variable used')
+        
+        if not self.variableMap[object1][0] == 'gameObject' or not self.variableMap[object2][0] == 'gameObject':
+            raise Exception('expected a gameObject')
+        
+        dimensions1 = self.variableMap[object1][1][0]
+        dimensions2 = self.variableMap[object2][1][0]
+
+        xOverlap = max(0, dimensions2[0] + dimensions2[2] - dimensions1[0]) if dimensions1[0] > dimensions2[0] else max(0, dimensions1[0] + dimensions1[2] - dimensions2[0])
+        yOverlap = max(0, dimensions2[1] + dimensions2[3] - dimensions1[1]) if dimensions1[1] > dimensions2[1] else max(0, dimensions1[1] + dimensions1[3] - dimensions2[1])
+
+        return 1 if xOverlap and yOverlap else 0
         
 # --------------------------------------------assignment statement-------------------------------------------------
     def interpretAssignmentStatement(self, root : AST) -> None:
@@ -459,6 +488,8 @@ class Interpreter:
             self.getX(root)
         elif root.token.value == 'getY':
             self.getY(root)
+        elif root.token.value == 'checkCollision':
+            self.checkCollision(root)
 
     def interpretStatementList(self, root : AST) -> None:
         for child in root.children:
