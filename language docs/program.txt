@@ -1,0 +1,21 @@
+datatypes:
+    float
+    integer
+    boolean
+    string
+    gameObject
+
+grammar:
+    start : program
+
+    program : 'initGame' statementList 'endGame'
+
+    statementList : assignmentStatement |
+                    ifElseIfBlock |
+                    whileLoop | breakStatement | continueStatement |
+                    screenRelatedStatement |
+                    gameObjectRelatedStatement |
+                    collisionRelatedStatement |
+                    inputRelatedStatement |
+                    guiRelatedStatement |
+                    ""

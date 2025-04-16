@@ -1,0 +1,21 @@
+function definition:
+    name:
+        setBackgroundColor
+    parameters:
+        r : integer
+        g : integer
+        b : integer
+        a : integer
+    
+    functionality:
+        Changes the screen background to their desired color
+
+function usage example:
+    snippet 1:
+        setBackgroundColor(0, 0, 0, 255);   // black
+    snippet 2:
+        setBackgroundColor(255, 255, 255, 255);     // white
+
+language:
+    start : statement
+    statement : 'setBackgroundColor' '(' arithmeticExpression ',' arithmeticExpression ',' arithmeticExpression ',' arithmeticExpression ')' ';'

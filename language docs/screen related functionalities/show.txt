@@ -1,0 +1,17 @@
+function definition:
+    name:
+        show
+    parameters:
+        None
+    
+    functionality:
+        Displays the screen
+
+
+function usage example:
+    snippet 1:
+        show();
+
+language:
+    start : statement
+    statement : 'show' '(' ')' ';'

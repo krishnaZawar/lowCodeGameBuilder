@@ -1,0 +1,17 @@
+funtion definition:
+    name:
+        initWindow
+    parameters: 
+        None
+
+    functionality:
+        opens a window with some default size
+
+function usage example:
+    snippet 1:
+        initWindow();
+
+language:
+    start : statement
+
+    statement : 'initWindow' '(' ')' ';'

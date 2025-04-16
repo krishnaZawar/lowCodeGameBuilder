@@ -1,0 +1,24 @@
+syntax:
+    while (booleanExpression){
+        // statements
+    }
+
+language:
+    start : whileLoop
+
+    whileLoop : 'while' '(' booleanExpression ')' '{' statementList '}'
+
+
+Break:
+    syntax:
+        break;
+    language:
+        start : breakStatement
+        breakStatement : 'break' ';'
+
+Continue:
+    syntax:
+        continue;
+    language:
+        start : continueStatement
+        continueStatement : 'continue' ';'

@@ -1,0 +1,16 @@
+function definition:
+    name:
+        setWindowTitle
+    parameters:
+        name : string
+
+    functionality:
+        updates the window title to name.
+
+function usage example:
+    snippet 1:
+        setWindowTitle("my game");
+
+language:
+    start : statement
+    statement : 'setWindowTitle' '(' STRINGLITERAL ')' ';'

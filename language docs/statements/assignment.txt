@@ -1,0 +1,23 @@
+syntax:
+    type 1:
+        <datatype> <var_name> = expression;
+
+    type 2:
+        <var_name> = expression;
+
+    type 3:
+        <datatype> <var_name>; 
+
+Note: expression should be according to the datatype
+
+language:
+    start : statement
+
+    statement : datatype IDENTIFIER '=' expression ';' |
+                datatype IDENTIFIER ';' |
+                IDENTIFIER '=' expression ';'
+
+    datatype : integer | float | boolean | string | gameObject
+
+    expression : arithmeticExpression |
+                 booleanExpression

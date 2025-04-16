@@ -1,0 +1,54 @@
+Game Building Language
+    Aim:
+        Write a Language to help developers build small games while learning the core concepts of programming.
+
+    Why is it helpful:
+        Learning the concepts of programming in traditional languages can be boring sometimes, as the small initial programs and text based outputs can kill interest. Our language simplifies game building by allowing the developers to build fun games with small lines of code with the learning.
+
+    Why choosing game dev for the task:
+        1. People love to play games, hence, the output will keep the developer interested in the building process.
+        2. The interactive response we get with games provides a much more fun learning journey.
+
+
+Core functionalities:
+    1. screen related
+        1. initialisation
+        2. window naming
+        3. sizing
+        4. background
+        5. show
+
+    2. gameObject related
+        1. creation
+        2. deletion
+        3. movement
+        4. sizing
+        5. draw
+        6. physics (optional)
+        7. import sprites (optional)
+    
+    3. Collision
+        provide functionalities but do not include it as a default behaviour for any gameObject.
+        1. activation for specific gameObject
+        2. if activated
+            1. allow checking for collisions
+            2. allow resolving collisions
+    
+    4. Input options
+        1. Keyboard
+        2. Mouse
+
+    5. GUI related (optional)
+        1. display text
+        2. buttons (optional)
+
+Language typing:
+    Writing a statically typed language is beneficial as it makes understanding the flow easier for the developers.
+
+
+Implementation overview:
+    Step 1: Define the grammar for the language and identify necessary tokens
+    Step 2: Write the lexer
+    Step 3: Write the parser
+    Step 4: Write the interpreter
+    Step 5: Create an exe for the game (optional) 
