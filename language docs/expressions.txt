@@ -13,7 +13,8 @@ arithmeticExpression:
     subExpr : '(' addSubExpr ')' | 
               '-' subExpr |
               IDENTIFIER | 
-              NUMERICLITERAL
+              NUMERICLITERAL |
+              STRINGLITERAL
 
 booleanExpression:
     start : orExpr

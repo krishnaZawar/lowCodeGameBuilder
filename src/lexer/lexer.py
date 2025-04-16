@@ -2,11 +2,7 @@ from lexer.token import Token
 from lexer.tokenType import TokenType
 
 class Lexer:
-    def __init__(self):
-        self.text: str = ""
-        self.ptr: int = 0
-
-    datatypes = ["integer", "real", "boolean", "string", "gameObject"]
+    datatypes = ["integer", "string", "gameObject"]
 
     keyword = [
         "initGame", "endGame", "if", "else", "while", "break", "continue",
@@ -26,11 +22,16 @@ class Lexer:
     def isAlpha(self, char) -> bool:
         return char.isalpha()
 
+    def __init__(self):
+        self.text: str = ""
+        self.ptr: int = 0
+
     def tokenize(self, text: str):
         self.text = text
         self.ptr = 0
 
     def getNextToken(self) -> Token:
+        curToken : Token
         while self.ptr < len(self.text) and self.text[self.ptr] in self.skippables:
             self.ptr += 1
 
@@ -41,13 +42,14 @@ class Lexer:
             self.ptr += 1
 
         if self.ptr >= len(self.text):
-            return Token("", TokenType.ENDOFFILE)
+            curToken = Token("", TokenType.ENDOFFILE)
+            return curToken
 
         if self.text[self.ptr] == ';':
             self.ptr += 1
-            return Token(";", TokenType.ENDOFLINE)
+            curToken =  Token(";", TokenType.ENDOFLINE)
 
-        if self.text[self.ptr] == '"':
+        elif self.text[self.ptr] == '"':
             self.ptr += 1
             value = ""
             buffer = False
@@ -67,67 +69,69 @@ class Lexer:
             if buffer or (self.ptr >= len(self.text) or self.text[self.ptr] != '"'):
                 raise Exception(f"Expected closing quote!")
             self.ptr += 1
-            return Token(value, TokenType.STRINGLITERAL)
+            curToken = Token(value, TokenType.STRINGLITERAL)
 
-        if self.text[self.ptr] in self.specialCharacters:
+        elif self.text[self.ptr] in self.specialCharacters:
             ch = self.text[self.ptr]
             self.ptr += 1
-            return Token(ch, TokenType.SPECIALCHARACTER)
+            curToken = Token(ch, TokenType.SPECIALCHARACTER)
 
-        if self.text[self.ptr] in self.openParenthesis:
+        elif self.text[self.ptr] in self.openParenthesis:
             ch = self.text[self.ptr]
             self.ptr += 1
-            return Token(ch, TokenType.OPENPARENTHESIS)
+            curToken = Token(ch, TokenType.OPENPARENTHESIS)
 
-        if self.text[self.ptr] in self.closeParenthesis:
+        elif self.text[self.ptr] in self.closeParenthesis:
             ch = self.text[self.ptr]
             self.ptr += 1
-            return Token(ch, TokenType.CLOSEPARENTHESIS)
+            curToken = Token(ch, TokenType.CLOSEPARENTHESIS)
 
-        if self.text[self.ptr] in self.arithmeticOperators:
+        elif self.text[self.ptr] in self.arithmeticOperators:
             ch = self.text[self.ptr]
             self.ptr += 1
-            return Token(ch, TokenType.ARITHMETICOPERATOR)
+            curToken = Token(ch, TokenType.ARITHMETICOPERATOR)
 
-        if self.text[self.ptr] == '=':
+        elif self.text[self.ptr] == '=':
             self.ptr += 1
             if self.ptr < len(self.text) and self.text[self.ptr] == '=':
                 self.ptr += 1
                 return Token("==", TokenType.RELATIONALOPERATOR)
-            return Token("=", TokenType.ASSIGNMENT)
+            curToken = Token("=", TokenType.ASSIGNMENT)
 
-        if self.text[self.ptr] in ['<', '>']:
+        elif self.text[self.ptr] in ['<', '>']:
             op = self.text[self.ptr]
             self.ptr += 1
             if self.ptr < len(self.text) and self.text[self.ptr] == '=':
                 op += '='
                 self.ptr += 1
-            return Token(op, TokenType.RELATIONALOPERATOR)
+            curToken = Token(op, TokenType.RELATIONALOPERATOR)
 
-        if self.text[self.ptr] == '!':
+        elif self.text[self.ptr] == '!':
             self.ptr += 1
             if self.ptr >= len(self.text) or self.text[self.ptr] != '=':
                 raise Exception(f"Unrecognized token '!'")
             self.ptr += 1
-            return Token("!=", TokenType.RELATIONALOPERATOR)
+            curToken = Token("!=", TokenType.RELATIONALOPERATOR)
 
-        if self.isDigit(self.text[self.ptr]):
+        elif self.isDigit(self.text[self.ptr]):
             value = ""
             while self.ptr < len(self.text) and self.isDigit(self.text[self.ptr]):
                 value += self.text[self.ptr]
                 self.ptr += 1
-            return Token(value,TokenType.NUMERICLITERAL)
+            curToken = Token(value,TokenType.NUMERICLITERAL)
 
-        if self.isAlpha(self.text[self.ptr]):
+        elif self.isAlpha(self.text[self.ptr]):
             value = ""
             while self.ptr < len(self.text) and (self.isAlpha(self.text[self.ptr]) or self.isDigit(self.text[self.ptr])):
                 value += self.text[self.ptr]
                 self.ptr += 1
             if value in self.keyword:
-                return Token(value, TokenType.KEYWORD)
+                curToken = Token(value, TokenType.KEYWORD)
             elif value in self.datatypes:
-                return Token(value, TokenType.KEYWORD)
+                curToken = Token(value, TokenType.KEYWORD)
             else:
-                return Token(value, TokenType.IDENTIFIER)
-
-        raise Exception(f"Unrecognized token {self.text[self.ptr]}")
+                curToken = Token(value, TokenType.IDENTIFIER)
+        else:
+            raise Exception(f"Unrecognized token {self.text[self.ptr]}")
+    
+        return curToken

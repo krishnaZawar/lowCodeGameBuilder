@@ -1,0 +1,6 @@
+initGame;
+integer num = 10 + 2 * (3 - 1 / 2) ;
+string a = "hello";
+string b = a + " world";
+num = num+1;
+endGame;

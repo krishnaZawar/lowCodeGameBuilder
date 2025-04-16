@@ -14,10 +14,9 @@ language:
     start : statement
 
     statement : datatype IDENTIFIER '=' expression ';' |
-                datatype IDENTIFIER ';' |
                 IDENTIFIER '=' expression ';'
 
-    datatype : integer | float | boolean | string | gameObject
+    datatype : integer | string | gameObject
 
     expression : arithmeticExpression |
                  booleanExpression
