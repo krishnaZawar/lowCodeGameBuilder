@@ -1,6 +1,13 @@
 initGame;
-integer num = 10 + 2 * (3 - 1 / 2) ;
-string a = "hello";
-string b = a + " world";
-num = num+1;
+integer x = 10;
+string a = "";
+while(x > 0){
+    if(x == 5){
+        x = -10;
+        continue;
+        a = "ok";
+    }
+    x = x - 1;
+}
+
 endGame;

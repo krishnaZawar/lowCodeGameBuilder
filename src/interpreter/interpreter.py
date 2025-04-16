@@ -1,13 +1,25 @@
 from parser.parser import Parser
 from parser.ast import AST
 from lexer.tokenType import TokenType
+from interpreter.loopControl import LoopControl
 
 class Interpreter:
     def __init__(self) -> None:
         self.parser = Parser()
 
         self.variableMap = {}
-
+        
+    
+    def isArithmeticExpression(self,root : AST) -> bool:
+        if root.token.type == TokenType.NUMERICLITERAL:
+            return True
+        if root.token.type == TokenType.STRINGLITERAL:
+            return False
+        if root.token.type == TokenType.IDENTIFIER:
+            variable = root.token.value
+            if not variable in self.variableMap:
+                raise Exception('Undeclared variable is used!')             
+            return True if self.variableMap[variable][0] == "integer" else False
 # -------------------------------------------arithmetic expressions------------------------------------------------
     def evaluateArithmeticOperatorNode(self, root : AST) -> int:
         left = root.children[0]
@@ -111,6 +123,66 @@ class Interpreter:
             return self.variableMap[root.token.value][1]
         raise Exception("expected a string value")
 
+# --------------------------------------------Boolean expression-------------------------------------------------
+    def evaluateBooleanCondition(self, root: AST) -> bool:
+        leftExpr = root.children[0]
+        rightExpr = root.children[1]
+
+        isLeftArithmetic = self.isArithmeticExpression(leftExpr)
+        isRightArithmetic = self.isArithmeticExpression(rightExpr)
+
+        if isLeftArithmetic != isRightArithmetic:
+            self.throwTypeError("Values of different datatypes cannot be compared", root.token.line)
+
+        if isLeftArithmetic:
+            leftVal = self.evaluateArithmeticExpression(leftExpr)
+            rightVal = self.evaluateArithmeticExpression(rightExpr)
+        else:
+            leftVal = str(self.evaluateStringExpression(leftExpr))
+            rightVal = str(self.evaluateStringExpression(rightExpr))
+
+        op = root.token.value
+        if op == ">":
+            return leftVal > rightVal
+        elif op == "<":
+            return leftVal < rightVal
+        elif op == ">=":
+            return leftVal >= rightVal
+        elif op == "<=":
+            return leftVal <= rightVal
+        elif op == "!=":
+            return leftVal != rightVal
+        else:  # assumes '=='
+            return leftVal == rightVal
+
+
+
+    def evaluateBooleanOperator(self, root: AST) -> bool:
+        leftExpr = root.children[0]
+        rightExpr = root.children[1]
+
+        # Evaluate left side
+        if leftExpr.token.type == TokenType.RELATIONALOPERATOR:
+            leftVal = self.evaluateBooleanCondition(leftExpr)
+        else:
+            leftVal = self.evaluateBooleanOperator(leftExpr)
+
+        # Evaluate right side
+        if rightExpr.token.type == TokenType.RELATIONALOPERATOR:
+            rightVal = self.evaluateBooleanCondition(rightExpr)
+        else:
+            rightVal = self.evaluateBooleanOperator(rightExpr)
+
+        return (leftVal and rightVal) if root.token.value == "and" else (leftVal or rightVal)
+
+
+    def evaluateBooleanExpression(self, root: AST) -> bool:
+        if root.token.type == TokenType.RELATIONALOPERATOR:
+            return self.evaluateBooleanCondition(root)
+        return self.evaluateBooleanOperator(root)
+
+
+
 # --------------------------------------------assignment statement-------------------------------------------------
 
     def interpretAssignmentStatement(self, root : AST) -> None:
@@ -139,11 +211,44 @@ class Interpreter:
                 value = self.evaluateStringExpression(root.children[1])
 
             self.variableMap[variable][1] = value
+            
+# ---------------------------------------------------interpret if else if block---------------------------------------------------
+
+    def interpretIfElseIfBlock(self,root : AST) -> None:
+        if root.token.value == "if":
+            condition_node = root.children[0]
+            if self.evaluateBooleanExpression(condition_node):
+                self.interpretStatementList(root.children[1])
+            elif len(root.children) == 3:
+                if root.children[2].token.value == "if":
+                    self.interpretIfElseIfBlock(root.children[2])
+                else:
+                    self.interpretStatementList(root.children[2])
+                    
+# ---------------------------------------------------interpret while blocl=k---------------------------------------------------
+            
+    def interpretWhileBlock(self,root : AST) -> None:
+        cond = root.children[0]
+        while self.evaluateBooleanExpression(cond):
+            try:
+                self.interpretStatementList(root.children[1])
+            except LoopControl as e:
+                if e.value == "break":
+                    break
+
+            
+
 
 # ---------------------------------------------------program---------------------------------------------------
     def interpretStatement(self, root : AST) -> None:
         if root.token.type == TokenType.ASSIGNMENT:
             self.interpretAssignmentStatement(root)
+        elif root.token.value == "if":
+            self.interpretIfElseIfBlock(root)
+        elif root.token.value == "while":
+            self.interpretWhileBlock(root)
+        elif root.token.value in ['break' , 'continue']:
+            raise  LoopControl(root.token.value)       
 
     def interpretStatementList(self, root : AST) -> None:
         for child in root.children:
@@ -153,3 +258,14 @@ class Interpreter:
         ast : AST  = self.parser.parse(text)
 
         self.interpretStatementList(ast)
+        
+        for var in self.variableMap:
+            print(f"{var} : {self.variableMap[var]}")
+            
+    def printAst(self, ast : AST,spaces = 0):
+        if not ast: 
+            return
+        print(f"{" "*spaces}{ast.token.value}")
+        for child in ast.children:
+            self.printAst(child, spaces+2)
+        

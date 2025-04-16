@@ -39,7 +39,7 @@ class Parser:
         elif self.curTokenValue("-"):
             root = AST(self.curToken)
             self.eat(TokenType.ARITHMETICOPERATOR)
-            root.children.append(Token("0", TokenType.NUMERICLITERAL))
+            root.children.append(AST(Token("0", TokenType.NUMERICLITERAL)))
             root.children.append(self.parseArithmeticSubExpr())
         elif self.peek(TokenType.IDENTIFIER) or self.peek(TokenType.NUMERICLITERAL) or self.peek(TokenType.STRINGLITERAL):
             root = AST(self.curToken)
@@ -85,9 +85,12 @@ class Parser:
             self.parseParenthesis(")")
             return root
         left = self.parseArithmeticExpression()
-        if self.curTokenValueIn(["and", "or"]):
+        if self.peek(TokenType.RELATIONALOPERATOR):
             root = AST(self.curToken)
-            self.eat(TokenType.KEYWORD)
+            self.eat(TokenType.RELATIONALOPERATOR)
+        else:
+            raise Exception('relational operator  token not recognised')
+    
         right = self.parseArithmeticExpression()
 
         root.children.append(left)
@@ -203,21 +206,21 @@ class Parser:
 # -------------------------------------------------------------------parse program---------------------------------------------------
 
     def parseStatement(self) -> AST:
-        root : AST | None = None
+        root : AST | None = AST()
         # assignment
         if self.curTokenValueIn(self.lexer.datatypes) or self.peek(TokenType.IDENTIFIER):
             root = self.parseAssignmentStatement()
 
-        if self.curTokenValue("if"):
+        elif self.curTokenValue("if"):
             root = self.parseIfElseIfBlock()
 
-        if self.curTokenValue("break"):
+        elif self.curTokenValue("break"):
             root = self.parseBreak()
 
-        if self.curTokenValue("continue"):
+        elif self.curTokenValue("continue"):
             root = self.parseContinue()
 
-        if self.curTokenValue("while"):
+        elif self.curTokenValue("while"):
             root = self.parseWhileLoop()
 
         return root
@@ -231,7 +234,7 @@ class Parser:
     def parse(self, text : str) -> AST:
         self.lexer.tokenize(text)
 
-        ast : AST = None
+        ast : AST = AST()
 
         self.curToken = self.lexer.getNextToken()
 
@@ -252,5 +255,5 @@ class Parser:
 
         if not self.peek(TokenType.ENDOFFILE):
             raise Exception("parsing error")
-
+        
         return ast

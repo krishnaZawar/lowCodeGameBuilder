@@ -1,6 +1,6 @@
 from lexer.token import Token
 
 class AST:
-    def __init__(self, token : Token = None) -> None:
-        self.token : Token | None = token
+    def __init__(self, token : Token = Token()) -> None:
+        self.token : Token = token
         self.children : list['AST'] = []

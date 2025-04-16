@@ -1,6 +1,6 @@
 from lexer.tokenType import TokenType
 class Token:
-    def __init__(self, value : str, type : TokenType) -> None:
+    def __init__(self, value : str = "", type : TokenType = None) -> None:
         self.type : TokenType= type
         self.value : str = value
 

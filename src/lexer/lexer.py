@@ -95,10 +95,11 @@ class Lexer:
             self.ptr += 1
             if self.ptr < len(self.text) and self.text[self.ptr] == '=':
                 self.ptr += 1
-                return Token("==", TokenType.RELATIONALOPERATOR)
-            curToken = Token("=", TokenType.ASSIGNMENT)
+                curToken = Token("==", TokenType.RELATIONALOPERATOR)
+            else:
+                curToken = Token("=", TokenType.ASSIGNMENT)
 
-        elif self.text[self.ptr] in ['<', '>']:
+        elif self.text[self.ptr] == '<' or self.text[self.ptr] == '>':
             op = self.text[self.ptr]
             self.ptr += 1
             if self.ptr < len(self.text) and self.text[self.ptr] == '=':
