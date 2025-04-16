@@ -1,4 +1,4 @@
-from src.lexer.tokenType import TokenType
+from lexer.tokenType import TokenType
 class Token:
     def __init__(self, type : TokenType, value : str) -> None:
         self.type : TokenType= type
