@@ -44,9 +44,6 @@ class Parser:
                 self.eat(TokenType.SPECIALCHARACTER)
                 root.children.append(self.parseArithmeticExpression())
             self.parseParenthesis(")")
-            
-        self.eat(TokenType.ENDOFLINE)
-
         return root
 
 # -------------------------------------------------------------------parse arithmetic expression------------------------------------
@@ -159,7 +156,10 @@ class Parser:
         root.token = self.curToken
         self.eat(TokenType.ASSIGNMENT)
 
-        root.children.append(self.parseArithmeticExpression())
+        if self.curTokenValue("GameObject"):
+            root.children.append(self.parseFunction())
+        else:
+            root.children.append(self.parseArithmeticExpression())
 
         self.eat(TokenType.ENDOFLINE)
 
@@ -245,6 +245,7 @@ class Parser:
 
         elif self.curTokenValueIn(self.lexer.functions):
             root = self.parseFunction()
+            self.eat(TokenType.ENDOFLINE)
 
         return root
 

@@ -187,10 +187,41 @@ class Interpreter:
             return self.evaluateBooleanCondition(root)
         return self.evaluateBooleanOperator(root)
 
+# ---------------------------------------------gameobject----------------------------------------------------------
+    def interpretGameObjectCall(self, root : AST) -> list:
+        if len(root.children) != 7:
+            raise Exception("GameObject expects four arguments: x, y, width and height, r, g, b")
+        
+        x = self.evaluateArithmeticExpression(root.children[0])
+        y = self.evaluateArithmeticExpression(root.children[1])
+        w = self.evaluateArithmeticExpression(root.children[2])
+        h = self.evaluateArithmeticExpression(root.children[3])
+        r = self.evaluateArithmeticExpression(root.children[4])
+        g = self.evaluateArithmeticExpression(root.children[5])
+        b = self.evaluateArithmeticExpression(root.children[6])
+
+        return [[x, y, w, h], [r, g, b]]
+    
+    def draw(self, root : AST) -> None:
+        if len(root.children) != 1:
+            raise Exception("draw expects one argument: gameObject")
+        
+        variable = root.children[0].token.value
+
+        if not variable in self.variableMap:
+            raise Exception("undeclared variable used")
+        
+        if self.variableMap[variable][0] != "gameObject":
+            raise Exception("Draw expects gameObject parameter")
+        
+        if self.window:
+            color, dimensions = self.variableMap[variable][1][1], self.variableMap[variable][1][0]
+            pygame.draw.rect(self.window, color, dimensions)
+
+        
 
 
 # --------------------------------------------assignment statement-------------------------------------------------
-
     def interpretAssignmentStatement(self, root : AST) -> None:
         if len(root.children) == 3:
             datatype = root.children[0].token.value
@@ -202,6 +233,8 @@ class Interpreter:
                 value = self.evaluateArithmeticExpression(root.children[2])
             elif datatype == "string":
                 value = self.evaluateStringExpression(root.children[2])
+            elif datatype == "gameObject":
+                value = self.interpretGameObjectCall(root.children[2])
 
             self.variableMap[variable] = [datatype, value]
         
@@ -215,6 +248,8 @@ class Interpreter:
                 value = self.evaluateArithmeticExpression(root.children[1])
             elif self.variableMap[variable][0] == "string":
                 value = self.evaluateStringExpression(root.children[1])
+            elif self.variableMap[variable][0] == "gameObject":
+                value = self.interpretGameObjectCall(root.children[1])
 
             self.variableMap[variable][1] = value
             
@@ -304,17 +339,17 @@ class Interpreter:
             self.setWindowTitle(root)
         elif root.token.value == 'setBackgroundColor':
             self.setBackgroundColor(root)
-        
-            
+        elif root.token.value == 'draw':
+            self.draw(root)
+
+    def interpretStatementList(self, root : AST) -> None:
+        for child in root.children:
+            self.interpretStatement(child)
         if self.window:
             if self.isWindowRunning:
                 self.updateWindow()
             else:
                 pygame.quit()
-
-    def interpretStatementList(self, root : AST) -> None:
-        for child in root.children:
-            self.interpretStatement(child)
 
     def interpret(self, text : str) -> None:
         ast : AST  = self.parser.parse(text)
@@ -327,7 +362,7 @@ class Interpreter:
     def printAst(self, ast : AST,spaces = 0):
         if not ast: 
             return
-        print(f"{" "*spaces}{ast.token.value}")
+        print(f"{' '*spaces}{ast.token.value}")
         for child in ast.children:
             self.printAst(child, spaces+2)
         
@@ -340,3 +375,5 @@ class Interpreter:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.isWindowRunning = False
+
+        pygame.display.flip()

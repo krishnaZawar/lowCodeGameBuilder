@@ -1,11 +1,14 @@
 initGame;
 
-initWindow(400,200);
-setWindowTitle("new window");
-setBackgroundColor(0,0,0);
-integer a = 1;
-while (a == 1){
-    a = 1;
-}
+    initWindow(400,200);
+    setWindowTitle("new window");
+    gameObject player = GameObject(10, 10, 100, 100, 0, 0, 0);
+    gameObject player2 = GameObject(10, 10, 10, 100, 255, 0, 0);
+    integer a = 1;
+    while (a == 1){
+        setBackgroundColor(255, 255, 255);
+        draw(player2);
+        a = 1;
+    }
 
 endGame;

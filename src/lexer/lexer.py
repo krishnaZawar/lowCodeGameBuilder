@@ -9,7 +9,7 @@ class Lexer:
     ]
 
     functions = [
-        "setBackgroundColor", "initWindow", "setWindowTitle", "show"
+        "setBackgroundColor", "initWindow", "setWindowTitle", "GameObject", "draw"
     ]
 
     arithmeticOperators = ['+', '-', '/', '*', '%']
@@ -135,6 +135,5 @@ class Lexer:
                 curToken = Token(value, TokenType.IDENTIFIER)
         else:
             raise Exception(f"Unrecognized token {self.text[self.ptr]}")
-        print(curToken.value)
     
         return curToken

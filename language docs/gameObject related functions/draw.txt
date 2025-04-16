@@ -2,7 +2,7 @@ function definition:
     name:
         draw
     parameters:
-        game object
+        gameObject
 functionality:
         darws the game object to the screen
 function usage examples:
@@ -11,7 +11,7 @@ function usage examples:
 
 language:
     start : statement
-    statement : 'draw' '(' string ')' ';'
+    statement : 'draw' '(' IDENTIFIER ')' ';'
     
 
     

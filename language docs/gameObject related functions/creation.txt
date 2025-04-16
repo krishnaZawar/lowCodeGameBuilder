@@ -1,6 +1,6 @@
 function definition:
     name : 
-        createObject
+        GameObject
     parameters:
         h : integer
         w : integer
