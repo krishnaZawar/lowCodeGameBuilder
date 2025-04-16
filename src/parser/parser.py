@@ -19,6 +19,12 @@ class Parser:
     def peek(self, type : TokenType) -> bool:
         return self.curToken.type == type
 
+    def parseParenthesis(self, value : str) -> None:
+        if self.curToken.value == value:
+            self.eat(self.curToken.type)
+        else:
+            raise Exception("parsing error")
+
     def __init__(self) -> None:
         self.lexer : Lexer = Lexer()
         self.curToken : Token | None = None
@@ -27,9 +33,9 @@ class Parser:
     def parseArithmeticSubExpr(self) -> AST:
         root : AST | None
         if self.curTokenValue("("):
-            self.eat(TokenType.OPENPARENTHESIS)
+            self.parseParenthesis("(")
             root = self.parseAddSubExpr()
-            self.eat(TokenType.CLOSEPARENTHESIS)
+            self.parseParenthesis(")")
         elif self.curTokenValue("-"):
             root = AST(self.curToken)
             self.eat(TokenType.ARITHMETICOPERATOR)
@@ -69,6 +75,52 @@ class Parser:
 
     def parseArithmeticExpression(self) -> AST:
         return self.parseAddSubExpr()
+    
+# -------------------------------------------------------------------parse boolean expressions-------------------------------------
+    def parseBooleanSubExpr(self) -> AST:
+        root : AST | None = None
+        if self.curTokenValue("("):
+            self.parseParenthesis("(")
+            root = self.parseOrExpr()
+            self.parseParenthesis(")")
+            return root
+        left = self.parseArithmeticExpression()
+        if self.curTokenValueIn(["and", "or"]):
+            root = AST(self.curToken)
+            self.eat(TokenType.KEYWORD)
+        right = self.parseArithmeticExpression()
+
+        root.children.append(left)
+        root.children.append(right)
+
+        return root
+    
+    def parseAndExpr(self) -> AST:
+        root = self.parseBooleanSubExpr()
+
+        while self.curTokenValue("and"):
+            newRoot = AST(self.curToken)
+            self.eat(TokenType.KEYWORD)
+            newRoot.children.append(root)
+            newRoot.children.append(self.parseAndExpr())
+            root = newRoot
+
+        return root
+    
+    def parseOrExpr(self) -> AST:
+        root = self.parseAndExpr()
+
+        while self.curTokenValue("or"):
+            newRoot = AST(self.curToken)
+            self.eat(TokenType.KEYWORD)
+            newRoot.children.append(root)
+            newRoot.children.append(self.parseOrExpr())
+            root = newRoot
+
+        return root
+
+    def parseBooleanExpression(self) -> AST:
+        return self.parseOrExpr()
 
 # -------------------------------------------------------------------parse assignment statement-------------------------------------
 
@@ -89,6 +141,33 @@ class Parser:
         self.eat(TokenType.ENDOFLINE)
 
         return root
+    
+# ----------------------------------------------------------------parse if else if block---------------------------------------------
+
+    def parseIfElseIfBlock(self) -> AST:
+        root : AST = AST(self.curToken)
+
+        self.eat(TokenType.KEYWORD)
+
+        self.parseParenthesis("(")
+        root.children.append(self.parseBooleanExpression())
+        self.parseParenthesis(")")
+
+        self.parseParenthesis("{")
+        root.children.append(self.parseStatementList(Token("}", TokenType.CLOSEPARENTHESIS)))
+        self.parseParenthesis("}")
+
+        if self.curTokenValue("else"):
+            self.eat(TokenType.KEYWORD)
+            if self.curTokenValue("if"):
+                root.children.append(self.parseIfElseIfBlock())
+            else:
+                self.parseParenthesis("{")
+                root.children.append(self.parseStatementList(Token("}", TokenType.CLOSEPARENTHESIS)))
+                self.parseParenthesis("}")
+
+        return root
+
             
     
 # -------------------------------------------------------------------parse program---------------------------------------------------

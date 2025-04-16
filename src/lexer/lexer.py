@@ -5,7 +5,7 @@ class Lexer:
     datatypes = ["integer", "string", "gameObject"]
 
     keyword = [
-        "initGame", "endGame", "if", "else", "while", "break", "continue",
+        "initGame", "endGame", "if", "else", "while", "break", "continue", "and", "or"
         "setBackgroudColor", "initWindow", "setWindowTitle", "show", "setWindowSize"
     ]
 
