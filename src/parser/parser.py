@@ -38,13 +38,14 @@ class Parser:
         
         if self.curTokenValue(")"):
             self.parseParenthesis(")")
-            return root
-        
-        root.children.append(self.parseArithmeticExpression())
-        while self.curTokenValue(","):
-            self.eat(TokenType.SPECIALCHARACTER)
+        else:  
             root.children.append(self.parseArithmeticExpression())
-        self.parseParenthesis(")")
+            while self.curTokenValue(","):
+                self.eat(TokenType.SPECIALCHARACTER)
+                root.children.append(self.parseArithmeticExpression())
+            self.parseParenthesis(")")
+            
+        self.eat(TokenType.ENDOFLINE)
 
         return root
 
@@ -277,5 +278,6 @@ class Parser:
 
         if not self.peek(TokenType.ENDOFFILE):
             raise Exception("parsing error")
+
         
         return ast

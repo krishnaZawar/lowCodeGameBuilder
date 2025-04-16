@@ -2,12 +2,18 @@ from parser.parser import Parser
 from parser.ast import AST
 from lexer.tokenType import TokenType
 from interpreter.loopControl import LoopControl
+import pygame
+
+pygame.init()
 
 class Interpreter:
     def __init__(self) -> None:
         self.parser = Parser()
 
         self.variableMap = {}
+        
+        self.window = None
+        self.isWindowRunning = False
         
     
     def isArithmeticExpression(self,root : AST) -> bool:
@@ -225,7 +231,7 @@ class Interpreter:
                 else:
                     self.interpretStatementList(root.children[2])
                     
-# ---------------------------------------------------interpret while blocl=k---------------------------------------------------
+# ---------------------------------------------------interpret while block---------------------------------------------------
             
     def interpretWhileBlock(self,root : AST) -> None:
         cond = root.children[0]
@@ -235,10 +241,53 @@ class Interpreter:
             except LoopControl as e:
                 if e.value == "break":
                     break
+                
+# ---------------------------------------------------Screen Function---------------------------------------------------
 
-            
+    def initWindow(self, root : AST) -> None:
+        if len(root.children) != 2:
+            raise Exception("initWindow expects two arguments: width and height")
+
+        width_node = root.children[0]
+        height_node = root.children[1]
+
+        width = self.evaluateArithmeticExpression(width_node)
+        height = self.evaluateArithmeticExpression(height_node)
+
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise Exception("Width and height must be integers")
+ 
+        self.window = pygame.display.set_mode((width, height))
+        
+        self.isWindowRunning = True
+        
+        # self.window.fill((255, 255, 255))
+        pygame.display.update()
 
 
+    def setWindowTitle(self,root : AST):
+        if len(root.children) != 1:
+            raise Exception('setWindowTitle expects one argument: title')
+        
+        title = self.evaluateStringExpression(root.children[0])
+        
+        if self.window:
+            pygame.display.set_caption(title)
+        
+    
+    
+    def setBackgroundColor(self,root : AST):
+        if len(root.children) != 3:
+            raise Exception('setBackgroundColor expects four argument: red , blue , green')    
+        
+        r = self.evaluateArithmeticExpression(root.children[0])
+        g = self.evaluateArithmeticExpression(root.children[1])
+        b = self.evaluateArithmeticExpression(root.children[2])
+        
+        if self.window:
+            self.window.fill((r,g,b))
+        
+        
 # ---------------------------------------------------program---------------------------------------------------
     def interpretStatement(self, root : AST) -> None:
         if root.token.type == TokenType.ASSIGNMENT:
@@ -248,7 +297,20 @@ class Interpreter:
         elif root.token.value == "while":
             self.interpretWhileBlock(root)
         elif root.token.value in ['break' , 'continue']:
-            raise  LoopControl(root.token.value)       
+            raise  LoopControl(root.token.value)
+        elif root.token.value == 'initWindow':
+            self.initWindow(root)
+        elif root.token.value == 'setWindowTitle':
+            self.setWindowTitle(root)
+        elif root.token.value == 'setBackgroundColor':
+            self.setBackgroundColor(root)
+        
+            
+        if self.window:
+            if self.isWindowRunning:
+                self.updateWindow()
+            else:
+                pygame.quit()
 
     def interpretStatementList(self, root : AST) -> None:
         for child in root.children:
@@ -269,3 +331,12 @@ class Interpreter:
         for child in ast.children:
             self.printAst(child, spaces+2)
         
+
+
+
+# -------------------------------------------------------Window----------------------------------------------------------
+
+    def updateWindow(self) -> None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.isWindowRunning = False

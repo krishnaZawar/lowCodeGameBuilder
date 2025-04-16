@@ -1,13 +1,11 @@
 initGame;
-integer x = 10;
-string a = "";
-while(x > 0){
-    if(x == 5){
-        x = -10;
-        continue;
-        a = "ok";
-    }
-    x = x - 1;
+
+initWindow(400,200);
+setWindowTitle("new window");
+setBackgroundColor(0,0,0);
+integer a = 1;
+while (a == 1){
+    a = 1;
 }
 
 endGame;

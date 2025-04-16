@@ -9,7 +9,7 @@ class Lexer:
     ]
 
     functions = [
-        "setBackgroudColor", "initWindow", "setWindowTitle", "show"
+        "setBackgroundColor", "initWindow", "setWindowTitle", "show"
     ]
 
     arithmeticOperators = ['+', '-', '/', '*', '%']
@@ -129,13 +129,12 @@ class Lexer:
             while self.ptr < len(self.text) and (self.isAlpha(self.text[self.ptr]) or self.isDigit(self.text[self.ptr])):
                 value += self.text[self.ptr]
                 self.ptr += 1
-            if value in self.keyword:
-                curToken = Token(value, TokenType.KEYWORD)
-            elif value in self.datatypes:
+            if value in self.keyword or value in self.datatypes or value in self.functions:
                 curToken = Token(value, TokenType.KEYWORD)
             else:
                 curToken = Token(value, TokenType.IDENTIFIER)
         else:
             raise Exception(f"Unrecognized token {self.text[self.ptr]}")
+        print(curToken.value)
     
         return curToken
