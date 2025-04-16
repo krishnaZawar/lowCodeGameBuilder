@@ -168,7 +168,37 @@ class Parser:
 
         return root
 
-            
+# -------------------------------------------------------------------parse while loop---------------------------------------------------
+    def parseWhileLoop(self) -> AST: 
+        root : AST = AST(self.curToken)
+
+        self.eat(TokenType.KEYWORD)
+
+        self.parseParenthesis("(")
+        root.children.append(self.parseBooleanExpression())
+        self.parseParenthesis(")")
+
+        self.parseParenthesis("{")
+        root.children.append(self.parseStatementList(Token("}", TokenType.CLOSEPARENTHESIS)))
+        self.parseParenthesis("}")
+
+        return root
+
+    def parseBreak(self) -> AST:
+        root : AST = AST(self.curToken)
+
+        self.eat(TokenType.KEYWORD)
+        self.eat(TokenType.ENDOFLINE)
+
+        return root
+    
+    def parseContinue(self) -> AST:
+        root : AST = AST(self.curToken)
+
+        self.eat(TokenType.KEYWORD)
+        self.eat(TokenType.ENDOFLINE)
+
+        return root
     
 # -------------------------------------------------------------------parse program---------------------------------------------------
 
@@ -177,6 +207,18 @@ class Parser:
         # assignment
         if self.curTokenValueIn(self.lexer.datatypes) or self.peek(TokenType.IDENTIFIER):
             root = self.parseAssignmentStatement()
+
+        if self.curTokenValue("if"):
+            root = self.parseIfElseIfBlock()
+
+        if self.curTokenValue("break"):
+            root = self.parseBreak()
+
+        if self.curTokenValue("continue"):
+            root = self.parseContinue()
+
+        if self.curTokenValue("while"):
+            root = self.parseWhileLoop()
 
         return root
 
