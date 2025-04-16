@@ -1,17 +1,22 @@
-funtion definition:
+function definition:
     name:
         initWindow
-    parameters: 
-        None
+    parameters:
+        width : integer
+        height : integer
 
     functionality:
-        opens a window with some default size
+        sizes the window to (width, height) and displays it.
+        (width, height) are in pixels.
 
 function usage example:
     snippet 1:
-        initWindow();
+        setWindowSize(1000, 800);
+
+    snippet 2:
+        integer height = 500;
+        setWindowSize(2*height, height);
 
 language:
     start : statement
-
-    statement : 'initWindow' '(' ')' ';'
+    statement : 'initWindow' '(' arithmeticExpression ',' arithmeticExpression ')' ';'

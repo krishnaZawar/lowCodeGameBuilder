@@ -6,7 +6,10 @@ class Lexer:
 
     keyword = [
         "initGame", "endGame", "if", "else", "while", "break", "continue", "and", "or"
-        "setBackgroudColor", "initWindow", "setWindowTitle", "show", "setWindowSize"
+    ]
+
+    functions = [
+        "setBackgroudColor", "initWindow", "setWindowTitle", "show"
     ]
 
     arithmeticOperators = ['+', '-', '/', '*', '%']

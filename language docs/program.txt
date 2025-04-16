@@ -20,3 +20,11 @@ grammar:
                 collisionRelatedStatement |
                 inputRelatedStatement |
                 guiRelatedStatement |
+
+Function call:
+    start: statement
+
+    statement : KEYWORD '(' arguments ')' ';' |
+                KEYWORD '(' ')' ';'
+    arguments : argument ',' arguments |
+                argument

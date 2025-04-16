@@ -3,6 +3,10 @@ from lexer.token import Token
 from lexer.tokenType import TokenType
 from parser.ast import AST
 class Parser:
+    def __init__(self) -> None:
+        self.lexer : Lexer = Lexer()
+        self.curToken : Token | None = None
+
 # ------------------------------------------------------------------generics--------------------------------------------------------
     def eat(self, type : TokenType) -> None:
         if self.peek(type):
@@ -24,10 +28,25 @@ class Parser:
             self.eat(self.curToken.type)
         else:
             raise Exception("parsing error")
+        
+    def parseFunction(self) -> AST:
+        root : AST = AST(self.curToken)
 
-    def __init__(self) -> None:
-        self.lexer : Lexer = Lexer()
-        self.curToken : Token | None = None
+        self.eat(TokenType.KEYWORD)
+
+        self.parseParenthesis("(")
+        
+        if self.curTokenValue(")"):
+            self.parseParenthesis(")")
+            return root
+        
+        root.children.append(self.parseArithmeticExpression())
+        while self.curTokenValue(","):
+            self.eat(TokenType.SPECIALCHARACTER)
+            root.children.append(self.parseArithmeticExpression())
+        self.parseParenthesis(")")
+
+        return root
 
 # -------------------------------------------------------------------parse arithmetic expression------------------------------------
     def parseArithmeticSubExpr(self) -> AST:
@@ -222,6 +241,9 @@ class Parser:
 
         elif self.curTokenValue("while"):
             root = self.parseWhileLoop()
+
+        elif self.curTokenValueIn(self.lexer.functions):
+            root = self.parseFunction()
 
         return root
 
