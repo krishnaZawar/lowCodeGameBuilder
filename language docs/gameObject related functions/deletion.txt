@@ -1,0 +1,15 @@
+function definition:
+    name : 
+        deleteObject
+    parameters:
+        object : string
+    
+    functionality:
+        Allows the deletion of game object.
+
+function usage example:
+    deleteObject(object)
+
+language:
+    start : statement
+    statement : 'deleteObject' '('IDENTIFIER')' ';'

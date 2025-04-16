@@ -1,0 +1,21 @@
+function definition:
+    name:
+        resolveCollision
+    parameters:
+        gameobject1 : string
+        gameobject2 : string
+
+    functionality:
+        resolves the collision between two game objects
+    
+    function usage example:
+            resolveCollision("gameobject1","gameobject2");   
+             
+        
+    language:
+        start : statement
+        statement : 'resolveCollision' '(' string ',' string ')'';'
+        
+
+
+            

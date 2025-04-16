@@ -1,0 +1,20 @@
+function definition:
+    name : 
+        createObject
+    parameters:
+        h : integer
+        w : integer
+        x : integer    
+        y : integer
+
+    functionality:
+        Allows the creation of game object of desired size(width and height) and position(along X and Y)
+        
+function usage example:
+        createObject(5, 3, 400, 500)
+
+language:
+    start : statement
+    statement : 'createObject' '(' arithmeticExpression ',' arithmeticExpression ',' arithmeticExpression ',' arithmeticExpression ')' ';'
+
+

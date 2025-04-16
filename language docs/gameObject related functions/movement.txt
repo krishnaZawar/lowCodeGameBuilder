@@ -1,0 +1,20 @@
+function definition:
+    name : 
+        movement
+    parameters:
+        up : string
+        down : string
+        left : string
+        right : string
+
+    functionality:
+        Allows the movement of game objects by setting up custom keys for up, down, left and right movement.
+        
+function usage example:
+        movement('w','s','a','d')
+
+language:
+    start : statement
+    statement : 'movement' '(' string ',' string ',' string ',' string ')' ';'
+    
+

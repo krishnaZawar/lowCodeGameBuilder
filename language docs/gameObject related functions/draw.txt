@@ -1,0 +1,17 @@
+function definition:
+    name:
+        draw
+    parameters:
+        game object
+functionality:
+        darws the game object to the screen
+function usage examples:
+        snippet 1:
+            draw(gameObject)
+
+language:
+    start : statement
+    statement : 'draw' '(' string ')' ';'
+    
+
+    
