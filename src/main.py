@@ -1,4 +1,4 @@
-def main():
+def main() -> None:
     with open("testFile.txt", "r") as file:
         file_contents = file.read()
 
