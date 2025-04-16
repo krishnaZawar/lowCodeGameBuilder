@@ -1,0 +1,23 @@
+function definition:
+    name:
+        sizing
+    parameters:
+        h : integer
+        w : integer
+
+    functionality:
+        allows the modification of height and width of game object
+    function usage example:
+        snippet 1:
+            sizing(50, 50);
+    language:
+        start : statement
+        statement : 'sizing' '(' arithmeticexpression',' arithmeticexpression')' ';'
+    
+
+
+
+
+
+
+            

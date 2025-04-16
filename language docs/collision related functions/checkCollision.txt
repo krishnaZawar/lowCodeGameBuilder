@@ -1,0 +1,21 @@
+function definition:
+    name:
+        checkCollision
+    parameters:
+        gameobject1 : string
+        gameobject2 : string
+
+    functionality:
+        checks the collision between two game objects
+    
+    function usage example:
+            checkCollision("gameobject1","gameobject2");   
+             
+        
+    language:
+        start : statement
+        statement : 'checkCollision' '(' string ',' string ')'';'
+        
+
+
+            

@@ -1,0 +1,23 @@
+function definition:
+    name:
+        activateCollision
+    parameters:
+        gameobject : string
+        enable : integer (if 0 = no collision else if 1 = add collision)
+
+    functionality:
+        allows us to add collision to the game objects
+    
+    function usage example:
+        snippet 1: 
+            activateCollision("object1",0);   //no collision
+        snippet 2:
+            activateCollision("object2",1);   //add collision
+        
+    language:
+        start : statement
+        statement : 'activateCollision' '(' string ',' arithmeticExpression  ')'';'
+        
+
+
+            

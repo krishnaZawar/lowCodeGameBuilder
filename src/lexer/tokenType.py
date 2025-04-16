@@ -11,3 +11,4 @@ class TokenType:
     SPECIALCHARACTER = 10
     ENDOFLINE = 11
     ENDOFFILE = 12
+    
