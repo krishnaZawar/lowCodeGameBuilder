@@ -9,7 +9,7 @@ class Lexer:
     ]
 
     functions = [
-        "setBackgroundColor", "initWindow", "setWindowTitle", "GameObject", "draw"
+        "setBackgroundColor", "initWindow", "setWindowTitle", "GameObject", "draw" , "moveX" , "moveY" , "getX" , "getY" , "keyDown"
     ]
 
     arithmeticOperators = ['+', '-', '/', '*', '%']

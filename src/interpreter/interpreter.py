@@ -12,7 +12,23 @@ class Interpreter:
 
         self.variableMap = {}
         
+        self.keysPressed = pygame.key.get_pressed()
+        
+        self.keys = {
+            "space" : pygame.K_SPACE,
+            "w" : pygame.K_w,
+            "s" : pygame.K_s,
+            "a" : pygame.K_a,
+            "d" : pygame.K_d,
+            "upArrow" : pygame.K_UP,
+            "downArrow" : pygame.K_DOWN,
+            "leftArrow" : pygame.K_LEFT,
+            "rightArrow" : pygame.K_RIGHT
+            
+        }
+        
         self.window = None
+        self.clock = pygame.time.Clock()
         self.isWindowRunning = False
         
     
@@ -24,8 +40,22 @@ class Interpreter:
         if root.token.type == TokenType.IDENTIFIER:
             variable = root.token.value
             if not variable in self.variableMap:
-                raise Exception('Undeclared variable is used!')             
+                raise Exception('Undeclared variable is used')             
             return True if self.variableMap[variable][0] == "integer" else False
+        if root.token.type == TokenType.ARITHMETICOPERATOR:
+            while root and root.token.type == TokenType.ARITHMETICOPERATOR:
+                root = root.children[0]
+            if root.token.type == TokenType.NUMERICLITERAL:
+                return True
+            if root.token.type == TokenType.STRINGLITERAL:
+                return False
+            if root.token.type == TokenType.IDENTIFIER:
+                variable = root.token.value
+                if not variable in self.variableMap:
+                    raise Exception('Undeclared variable is used')             
+                return True if self.variableMap[variable][0] == "integer" else False
+            return root.token.value in ['getX', 'getY' , 'keyDown']
+        return root.token.value in ['getX', 'getY' , 'keyDown']
 # -------------------------------------------arithmetic expressions------------------------------------------------
     def evaluateArithmeticOperatorNode(self, root : AST) -> int:
         left = root.children[0]
@@ -44,6 +74,10 @@ class Interpreter:
             if self.variableMap[left.token.value][0] != "integer":
                 raise Exception("Expected integer")
             leftVal = self.variableMap[left.token.value][1]
+        elif left.token.value in ['getX', 'getY']:
+            leftVal = self.getX(left) if left.token.value == 'getX' else self.getY(left)
+        elif left.token.value == 'keyDown':
+            leftVal = self.keyDown(left)
         else:
             raise Exception("expected a numeric value")
         
@@ -57,6 +91,10 @@ class Interpreter:
             if self.variableMap[right.token.value][0] != "integer":
                 raise Exception("Expected integer")
             rightVal = self.variableMap[right.token.value][1]
+        elif right.token.value in ['getX', 'getY']:
+            rightVal = self.getX(right) if right.token.value == 'getX' else self.getY(right)
+        elif right.token.value == 'keyDown':
+            rightVal = self.keyDown(right)
         else:
             raise Exception("expected a numeric value")
         
@@ -74,7 +112,11 @@ class Interpreter:
                 raise Exception("undefined variable used")
             if self.variableMap[root.token.value][0] != "integer":
                 raise Exception("Expected integer")
-            return self.variableMap[root.token.value][1]    
+            return self.variableMap[root.token.value][1] 
+        elif root.token.value in ['getX', 'getY']:
+            return self.getX(root) if root.token.value == 'getX' else self.getY(root) 
+        elif root.token.value == 'keyDown':
+            return self.keyDown(root)
         raise Exception("expected a numeric value")
     
 # ---------------------------------------------string expression--------------------------------------------------
@@ -138,7 +180,7 @@ class Interpreter:
         isRightArithmetic = self.isArithmeticExpression(rightExpr)
 
         if isLeftArithmetic != isRightArithmetic:
-            self.throwTypeError("Values of different datatypes cannot be compared", root.token.line)
+            raise Exception('Data types are incomparable')
 
         if isLeftArithmetic:
             leftVal = self.evaluateArithmeticExpression(leftExpr)
@@ -204,7 +246,7 @@ class Interpreter:
     
     def draw(self, root : AST) -> None:
         if len(root.children) != 1:
-            raise Exception("draw expects one argument: gameObject")
+             raise Exception("draw expects one argument: gameObject")
         
         variable = root.children[0].token.value
 
@@ -218,9 +260,76 @@ class Interpreter:
             color, dimensions = self.variableMap[variable][1][1], self.variableMap[variable][1][0]
             pygame.draw.rect(self.window, color, dimensions)
 
+    def moveX(self,root : AST):
+        if len(root.children) != 2:
+            raise Exception("moveX expects two argument: gameObject and moveValue")
+        gameObject = root.children[0].token.value
+        moveValue = self.evaluateArithmeticExpression(root.children[1])
         
+        if not gameObject in self.variableMap:
+            raise Exception("undeclared variable used")
+        
+        if self.variableMap[gameObject][0] != "gameObject":
+            raise Exception("Draw expects gameObject parameter")
+        
+        dimensions = self.variableMap[gameObject][1][0]
+        dimensions[0] += moveValue
 
+    def moveY(self,root : AST):
+        if len(root.children) != 2:
+            raise Exception("moveY expects two argument: gameObject and moveValue")
+        gameObject = root.children[0].token.value
+        moveValue = self.evaluateArithmeticExpression(root.children[1])
+        
+        if not gameObject in self.variableMap:
+            raise Exception("undeclared variable used")
+        
+        if self.variableMap[gameObject][0] != "gameObject":
+            raise Exception("Draw expects gameObject parameter")
+        
+        dimensions = self.variableMap[gameObject][1][0]
+        dimensions[1] += moveValue
+        
+    def getX(self,root : AST):
+        if len(root.children) != 1:
+            raise Exception("getX expects two argument: gameObject")
+        gameObject = root.children[0].token.value
+        
+        if not gameObject in self.variableMap:
+            raise Exception("undeclared variable used")
+        
+        if self.variableMap[gameObject][0] != "gameObject":
+            raise Exception("Draw expects gameObject parameter")
+        
+        dimensions = self.variableMap[gameObject][1][0]
+        return dimensions[0]  
 
+    def getY(self,root : AST):
+        if len(root.children) != 1:
+            raise Exception("getY expects two argument: gameObject")
+        gameObject = root.children[0].token.value
+        
+        if not gameObject in self.variableMap:
+            raise Exception("undeclared variable used")
+        
+        if self.variableMap[gameObject][0] != "gameObject":
+            raise Exception("Draw expects gameObject parameter")
+        
+        dimensions = self.variableMap[gameObject][1][0]
+        return dimensions[1] 
+
+# --------------------------------------------inputs-------------------------------------------------
+    
+    def keyDown(self , root : AST):
+        if len(root.children) != 1:
+            raise Exception('keyDown expects one argument : key')
+        
+        key = root.children[0].token.value
+        
+        if self.keysPressed[self.keys[key]]:
+            return 1
+        return 0 
+        
 # --------------------------------------------assignment statement-------------------------------------------------
     def interpretAssignmentStatement(self, root : AST) -> None:
         if len(root.children) == 3:
@@ -321,6 +430,7 @@ class Interpreter:
         
         if self.window:
             self.window.fill((r,g,b))
+            
         
         
 # ---------------------------------------------------program---------------------------------------------------
@@ -341,6 +451,14 @@ class Interpreter:
             self.setBackgroundColor(root)
         elif root.token.value == 'draw':
             self.draw(root)
+        elif root.token.value == 'moveX':
+            self.moveX(root)
+        elif root.token.value == 'moveY':
+            self.moveY(root)
+        elif root.token.value == 'getX':
+            self.getX(root)
+        elif root.token.value == 'getY':
+            self.getY(root)
 
     def interpretStatementList(self, root : AST) -> None:
         for child in root.children:
@@ -372,8 +490,11 @@ class Interpreter:
 # -------------------------------------------------------Window----------------------------------------------------------
 
     def updateWindow(self) -> None:
+        self.keysPressed = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.isWindowRunning = False
 
         pygame.display.flip()
+        self.clock.tick(60)
+        
