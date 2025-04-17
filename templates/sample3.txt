@@ -1,0 +1,54 @@
+initGame;
+
+initWindow(600, 400);
+setWindowTitle("User Input Demo");
+
+gameObject player = GameObject(300, 200, 50, 50, 255, 200, 0);
+gameObject target = GameObject(450, 100, 30, 30, 0, 255, 0);
+
+integer running = 1;
+integer playerX = 300;
+integer playerY = 200;
+integer moveSpeed = 5;
+
+while (running == 1) {
+    setBackgroundColor(240, 240, 240);
+
+    if (keyDown("w") == 1 or keyDown("upArrow") == 1) {
+        playerY = playerY - moveSpeed;
+    }
+    if (keyDown("s") == 1 or keyDown("downArrow") == 1) {
+        playerY = playerY + moveSpeed;
+    }
+    if (keyDown("a") == 1 or keyDown("leftArrow") == 1) {
+        playerX = playerX - moveSpeed;
+    }
+    if (keyDown("d") == 1 or keyDown("rightArrow") == 1) {
+        playerX = playerX + moveSpeed;
+    }
+
+    if (playerX < 0) { playerX = 0; }
+    if (playerX > 550) { playerX = 550; }
+    if (playerY < 0) { playerY = 0; }
+    if (playerY > 350) { playerY = 350; }
+
+    player = GameObject(playerX, playerY, 50, 50, 255, 200, 0);
+
+    if (checkCollision(player, target) == 1) {
+        target = GameObject(50 + (playerX % 500), 50 + (playerY % 300), 30, 30, 0, 255, 0);
+    }
+
+    draw(target);
+    draw(player);
+    show();
+
+    if (keyDown("space") == 1) {
+        running = 0;
+    }
+
+}
+    
+
+
+
+endGame;

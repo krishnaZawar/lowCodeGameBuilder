@@ -1,0 +1,57 @@
+initGame;
+
+    initWindow(600, 400);
+    setWindowTitle("If-Else Demo");
+    
+    gameObject redBox = GameObject(100, 200, 50, 50, 255, 0, 0);
+    gameObject blueBox = GameObject(300, 200, 50, 50, 0, 0, 255);
+    gameObject greenBox = GameObject(500, 200, 50, 50, 0, 255, 0);
+    
+    integer running = 1;
+    integer activeBox = 1;       
+    
+    while (running == 1) {
+        
+        setBackgroundColor(240, 240, 240);
+        
+        
+        if (keyDown("a") == 1) {
+            activeBox = 1;       
+        }
+        if (keyDown("s") == 1) {
+            activeBox = 2;       
+        }
+        if (keyDown("d") == 1) {
+            activeBox = 3;       
+        }
+        
+       
+        if (activeBox == 1) {
+           
+            redBox = GameObject(75, 175, 100, 100, 255, 0, 0);
+            blueBox = GameObject(300, 200, 50, 50, 0, 0, 255);
+            greenBox = GameObject(500, 200, 50, 50, 0, 255, 0);
+        } else if (activeBox == 2) {
+            
+            redBox = GameObject(100, 200, 50, 50, 255, 0, 0);
+            blueBox = GameObject(275, 175, 100, 100, 0, 0, 255);
+            greenBox = GameObject(500, 200, 50, 50, 0, 255, 0);
+        } else {
+            
+            redBox = GameObject(100, 200, 50, 50, 255, 0, 0);
+            blueBox = GameObject(300, 200, 50, 50, 0, 0, 255);
+            greenBox = GameObject(475, 175, 100, 100, 0, 255, 0);
+        }
+        
+        
+        draw(redBox);
+        draw(blueBox);
+        draw(greenBox); 
+        show();
+      
+        if (keyDown("space") == 1) {
+            running = 0;
+        }
+    }
+
+endGame;

@@ -1,0 +1,35 @@
+initGame;
+
+    initWindow(600, 400);
+    setWindowTitle("While Loop Demo");
+    gameObject box = GameObject(50, 200, 40, 40, 0, 0, 255);
+    
+    integer running = 1;
+    integer boxX = 50;           
+    integer direction = 1;        
+    integer speed = 3;           
+    
+    
+    while (running == 1) {
+       
+        setBackgroundColor(240, 240, 240);
+        boxX = boxX + (speed * direction);
+        
+        if (boxX > 550) {
+            direction = -1;       
+        }
+        if (boxX < 50) {
+            direction = 1;        
+        }
+        
+        box = GameObject(boxX, 200, 40, 40, 0, 0, 255);
+        
+        draw(box);
+        show();
+        
+        if (keyDown("space") == 1) {
+            running = 0;
+        }
+    }
+
+endGame;
