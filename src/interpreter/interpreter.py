@@ -460,7 +460,9 @@ class Interpreter:
         if self.window:
             self.window.fill((r,g,b))
             
-        
+    
+    def show(self, root : AST) -> None:
+        pygame.display.flip()
         
 # ---------------------------------------------------program---------------------------------------------------
     def interpretStatement(self, root : AST) -> None:
@@ -490,6 +492,8 @@ class Interpreter:
             self.getY(root)
         elif root.token.value == 'checkCollision':
             self.checkCollision(root)
+        elif root.token.value == 'show':
+            self.show(root)
 
     def interpretStatementList(self, root : AST) -> None:
         for child in root.children:
@@ -505,8 +509,6 @@ class Interpreter:
 
         self.interpretStatementList(ast)
         
-        for var in self.variableMap:
-            print(f"{var} : {self.variableMap[var]}")
             
     def printAst(self, ast : AST,spaces = 0):
         if not ast: 
@@ -516,8 +518,6 @@ class Interpreter:
             self.printAst(child, spaces+2)
         
 
-
-
 # -------------------------------------------------------Window----------------------------------------------------------
 
     def updateWindow(self) -> None:
@@ -526,6 +526,5 @@ class Interpreter:
             if event.type == pygame.QUIT:
                 self.isWindowRunning = False
 
-        pygame.display.flip()
         self.clock.tick(60)
         
