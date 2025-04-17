@@ -1,96 +1,23 @@
 initGame;
+    initWindow(600, 400);
+    setWindowTitle("test window");
+    gameObject a = GameObject(100, 100, 100, 100, 255, 0, 0);
+    gameObject b = GameObject(300, 100, 100, 100, 0, 0, 255);
+    integer display = 1;
+    integer running = 1;
+    while(running == 1){
+        if(keyDown("Space") == 1){
+            display = display * -1;
+        }
 
-initWindow(800, 600);
-setWindowTitle("Flappy Bird");
+        setBackgroundColor(255, 255, 255);
 
-setBackgroundColor(135, 206, 235);
-
-gameObject bird = GameObject(100, 300, 30, 30, 255, 255, 0);
-gameObject ground = GameObject(0, 550, 800, 50, 139, 69, 19);
-
-gameObject topPipe1 = GameObject(600, 0, 60, 200, 0, 200, 0);
-gameObject bottomPipe1 = GameObject(600, 350, 60, 250, 0, 200, 0);
-gameObject topPipe2 = GameObject(900, 0, 60, 150, 0, 200, 0);
-gameObject bottomPipe2 = GameObject(900, 300, 60, 300, 0, 200, 0);
-
-
-integer running = 1;
-integer gameStarted = 0;
-integer score = 0;
-integer gravity = 1;
-integer velocity = 0;
-integer pipeSpeed = 2;
-integer jumpStrength = -8;
-integer pipe1Passed = 0;
-integer pipe2Passed = 0;
-integer gap = 0;
-integer topHeight = 0;
-
-while (running == 1) {
-
-    setBackgroundColor(135, 206, 235);
-
-    if (gameStarted == 0 and keyDown("space") == 1) {
-        gameStarted = 1;
-        velocity = jumpStrength;
+        if(display == 1){
+            draw(a);
+        }
+        else{
+            draw(b);
+        }
+        show();
     }
-
-    if (gameStarted == 1) {
-        velocity = velocity + gravity;
-        if (velocity > 10) {
-            velocity = 10;
-        }
-
-        moveY(bird, velocity);
-
-        moveX(topPipe1, -pipeSpeed);
-        moveX(bottomPipe1, -pipeSpeed);
-        moveX(topPipe2, -pipeSpeed);
-        moveX(bottomPipe2, -pipeSpeed);
-
-        if (getX(topPipe1) < -60) {
-            gap = 150;
-            topHeight = 150;
-            topPipe1 = GameObject(800, 0, 60, topHeight, 0, 200, 0);
-            bottomPipe1 = GameObject(800, topHeight + gap, 60, 550 - topHeight - gap, 0, 200, 0);
-            pipe1Passed = 0;
-        }
-
-        if (getX(topPipe2) < -60) {
-            gap = 150;
-            topHeight = 200;
-            topPipe2 = GameObject(800, 0, 60, topHeight, 0, 200, 0);
-            bottomPipe2 = GameObject(800, topHeight + gap, 60, 550 - topHeight - gap, 0, 200, 0);
-            pipe2Passed = 0;
-        }
-
-        if (keyDown("space") == 1) {
-            velocity = jumpStrength;
-        }
-
-        if (checkCollision(bird, ground) == 1 or 
-            checkCollision(bird, topPipe1) == 1 or 
-            checkCollision(bird, bottomPipe1) == 1 or 
-            checkCollision(bird, topPipe2) == 1 or 
-            checkCollision(bird, bottomPipe2) == 1) {
-            running = 0;
-        }
-
-        if (getY(bird) < 0) {
-            moveY(bird, 2);
-            velocity = 2;
-        }
-    }
-
-    draw(ground);
-    draw(topPipe1);
-    draw(bottomPipe1);
-    draw(topPipe2);
-    draw(bottomPipe2);
-    draw(bird);
-
-    show();
-   
-}
-
 endGame;
