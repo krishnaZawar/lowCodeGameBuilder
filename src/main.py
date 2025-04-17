@@ -1,6 +1,6 @@
 from interpreter.interpreter import Interpreter
 def main() -> None:
-    with open("templates/sample3.txt", "r") as file:
+    with open("templates/sample4.txt", "r") as file:
         file_contents = file.read()
 
     try:

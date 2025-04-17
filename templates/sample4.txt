@@ -1,0 +1,58 @@
+initGame;
+
+initWindow(600, 400);
+setWindowTitle("Nested Loops Demo");
+
+integer gridWidth = 5;
+integer gridHeight = 4;
+integer tileSize = 50;
+integer tileSpacing = 10;
+integer row = 0;
+integer col = 0;
+integer tileX = 0;
+integer tileY = 0;
+integer red = 0;
+integer blue = 0;
+integer green = 0;
+gameObject tile = GameObject(tileX, tileY, tileSize, tileSize, red, green, blue);
+
+
+
+
+
+integer running = 1;
+integer animationFrame = 0;
+
+while (running == 1) {
+    setBackgroundColor(240, 240, 240);
+
+    row = 0;
+    while (row < gridHeight) {
+
+        col = 0;
+        while (col < gridWidth) {
+            tileX = 100 + col * (tileSize + tileSpacing);
+            tileY = 100 + row * (tileSize + tileSpacing);
+
+            red = (row * 50) % 256;
+            green = (col * 50) % 256;
+            blue = ((animationFrame + row + col) * 10) % 256;
+
+            tile = GameObject(tileX, tileY, tileSize, tileSize, red, green, blue);
+            draw(tile);
+
+            col = col + 1;
+        }
+
+        row = row + 1;
+    }
+
+    animationFrame = animationFrame + 1;
+    show();
+
+    if (keyDown("space") == 1) {
+        running = 0;
+    }
+}
+
+endGame;
