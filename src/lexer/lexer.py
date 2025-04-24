@@ -35,6 +35,7 @@ class Lexer:
 
     def getNextToken(self) -> Token:
         curToken : Token
+
         while self.ptr < len(self.text) and self.text[self.ptr] in self.skippables:
             self.ptr += 1
 
@@ -43,10 +44,14 @@ class Lexer:
             while self.ptr < len(self.text) and self.text[self.ptr] != '\n':
                 self.ptr += 1
             self.ptr += 1
+            
+        while self.ptr < len(self.text) and self.text[self.ptr] in self.skippables:
+            self.ptr += 1
 
         if self.ptr >= len(self.text):
             curToken = Token("", TokenType.ENDOFFILE)
             return curToken
+        
 
         if self.text[self.ptr] == ';':
             self.ptr += 1
